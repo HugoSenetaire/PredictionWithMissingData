@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from utils import prepare_process, expand_for_imputations
+from .utils import prepare_process, expand_for_imputations
 
 
 ## Abstract imputation class :

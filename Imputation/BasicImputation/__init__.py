@@ -3,4 +3,4 @@ from .no_imputation import MaskAsInput, NoDestructionImputation
 from .module_imputation import ModuleImputation, SumImpute
 from .dataset_based_imputation import DatasetBasedImputation
 from .noise_impute import NoiseImputation
-from .utils import get_imputation_type
+from .imputation_type import get_imputation_type
