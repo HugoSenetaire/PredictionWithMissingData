@@ -1,0 +1,3 @@
+[submodule "VAEACImputation/vaeac"]
+	path = VAEACImputation/vaeac
+	url = https://github.com/HugoSenetaire/vaeac.git
