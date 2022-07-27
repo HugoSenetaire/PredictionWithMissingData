@@ -18,12 +18,16 @@ class Gaussian(nn.Module):
     cov = torch.matmul(aux, aux.t())
     log_prob_list = []
     mask = mask.type(torch.bool)
-    for i, (current_x, current_mask) in enumerate(zip(x, mask)):
-        current_x_s = current_x[current_mask]
-        mu_s = self.mu[current_mask]
-        cov_s = cov[current_mask][:, current_mask]
-        p_x = torch.distributions.MultivariateNormal(mu_s, cov_s) # TODO (@hhjs) : Change this to use LowerTriangular
-        log_prob_list.append(-p_x.log_prob(current_x_s))
-    return torch.stack(log_prob_list), None
+    if torch.all(mask == True):
+      p_x = torch.distributions.MultivariateNormal(self.mu, cov)
+      return -p_x.log_prob(x), None
+    else :
+      for i, (current_x, current_mask) in enumerate(zip(x, mask)):
+          current_x_s = current_x[current_mask]
+          mu_s = self.mu[current_mask]
+          cov_s = cov[current_mask][:, current_mask]
+          p_x = torch.distributions.MultivariateNormal(mu_s, cov_s) # TODO (@hhjs) : Change this to use LowerTriangular
+          log_prob_list.append(-p_x.log_prob(current_x_s))
+      return torch.stack(log_prob_list), None
 
-    
+      
