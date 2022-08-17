@@ -50,8 +50,11 @@ class ModuleImputation(Imputation):
                       add_mask= add_mask,
                       post_process_regularization=post_process_regularization,)
       self.module = module
+      for param in self.module.parameters():
+          param.requires_grad = False
       
   def imputation_function(self, data, mask, index = None):
-      imputation = self.module(data, mask, index = index)
+      with torch.no_grad():
+        imputation = self.module(data, mask, index = index)
       data_imputed = data * mask + (1-mask) * imputation
       return data_imputed
