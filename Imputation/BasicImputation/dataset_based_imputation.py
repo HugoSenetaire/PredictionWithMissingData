@@ -36,7 +36,8 @@ class DatasetBasedImputation(Imputation):
             dataset_type = "Train"
           else :
             dataset_type = "Test"
-          imputed_output = self.dataset.impute(value = data.detach(), mask = mask.detach(), index = index, dataset_type = dataset_type)
+          with torch.no_grad():
+            imputed_output = self.dataset.impute(value = data.detach(), mask = mask.detach(), index = index, dataset_type = dataset_type)
           data_imputed = mask * data + (1-mask) * imputed_output
           return data_imputed
         else :
