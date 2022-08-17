@@ -98,7 +98,7 @@ class GaussianMixtureBasedImputation(nn.Module):
 
         
 
-      return dependency, wanted_shape
+      return global_dependency, wanted_shape
       
   def __call__(self, data, mask, index=None,):
     raise NotImplementedError
