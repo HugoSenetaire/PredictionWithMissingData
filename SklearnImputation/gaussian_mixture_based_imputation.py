@@ -65,40 +65,23 @@ class GaussianMixtureBasedImputation(nn.Module):
         wanted_shape = torch.Size((batch_size, self.nb_centers, *other_dim))
         wanted_shape_flatten = torch.Size((batch_size, self.nb_centers,np.prod(other_dim),))
 
-        global_data_expanded = data.detach().unsqueeze(1).expand(wanted_shape).reshape(wanted_shape_flatten)
-        global_mask_expanded = mask.detach().unsqueeze(1).expand(wanted_shape).reshape(wanted_shape_flatten)
-        global_centers = self.means.unsqueeze(0).expand(wanted_shape_flatten)
-        global_variance = self.covariances.unsqueeze(0).expand(wanted_shape_flatten)
-        global_weights = self.weights.unsqueeze(0).expand(torch.Size((batch_size, self.nb_centers,)))
 
-        global_dependency = None
-
-        step_batch_size = int(batch_size/10.)
-        for k in range(10):
-          data_expanded = global_data_expanded[k*step_batch_size:(k+1)*step_batch_size]
-          mask_expanded = global_mask_expanded[k*step_batch_size:(k+1)*step_batch_size]
-          
-          centers = global_centers[k*step_batch_size:(k+1)*step_batch_size]
-          variance = global_variance[k*step_batch_size:(k+1)*step_batch_size]
-          weights = global_weights[k*step_batch_size:(k+1)*step_batch_size]
-
-
-
-          dependency = -(data_expanded - centers)**2/2/variance - torch.log(variance)/2
-          dependency = torch.sum(dependency* mask_expanded,axis=-1) + torch.log(weights)
-          dependency[torch.where(torch.isnan(dependency))] = torch.zeros_like(dependency[torch.where(torch.isnan(dependency))]) #TODO : AWFUL WAY OF CLEANING THE ERROR, to change
-          dependency_max, _ = torch.max(dependency, axis = -1, keepdim = True)
-          dependency -= torch.log(torch.sum(torch.exp(dependency - dependency_max) + 1e-8, axis = -1, keepdim=True)) + dependency_max
-          dependency = torch.exp(dependency)
-
-          if global_dependency is None:
-            global_dependency = dependency
-          else:
-            global_dependency = torch.cat((global_dependency, dependency), axis = 0)
-
+        data_expanded = data.detach().unsqueeze(1).expand(wanted_shape).reshape(wanted_shape_flatten)
+        mask_expanded = mask.detach().unsqueeze(1).expand(wanted_shape).reshape(wanted_shape_flatten)
         
+        centers = self.means.unsqueeze(0).expand(wanted_shape_flatten)
+        variance = self.covariances.unsqueeze(0).expand(wanted_shape_flatten)
+        weights = self.weights.unsqueeze(0).expand(torch.Size((batch_size, self.nb_centers,)))
 
-      return global_dependency, wanted_shape
+
+        dependency = -(data_expanded - centers)**2/2/variance - torch.log(variance)/2
+        dependency = torch.sum(dependency* mask_expanded,axis=-1) + torch.log(weights)
+        dependency[torch.where(torch.isnan(dependency))] = torch.zeros_like(dependency[torch.where(torch.isnan(dependency))]) #TODO : AWFUL WAY OF CLEANING THE ERROR, to change
+        dependency_max, _ = torch.max(dependency, axis = -1, keepdim = True)
+        dependency -= torch.log(torch.sum(torch.exp(dependency - dependency_max) + 1e-8, axis = -1, keepdim=True)) + dependency_max
+        dependency = torch.exp(dependency)
+
+      return dependency, wanted_shape
       
   def __call__(self, data, mask, index=None,):
     raise NotImplementedError
