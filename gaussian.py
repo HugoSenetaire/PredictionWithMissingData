@@ -11,13 +11,19 @@ class Gaussian(nn.Module):
     self.lower_tri = nn.parameter.Parameter(torch.normal(mean = torch.zeros(len(self.tril_indices[0])), std = torch.ones(len(self.tril_indices[0]))), requires_grad = True,)
     self.count = 0
 
-  def forward(self, x, mask):
+  def get_cov(self):
     aux = torch.zeros((self.dim, self.dim), dtype=torch.float32)
     aux[self.tril_indices[0], self.tril_indices[1]] = self.lower_tri
     aux += torch.diag(torch.exp(self.log_diagonal))
     cov = torch.matmul(aux, aux.t())
+    return cov
+
+  def forward(self, x, mask):
+    
+    cov = self.get_cov()
     log_prob_list = []
     mask = mask.type(torch.bool)
+
     if torch.all(mask == True):
       p_x = torch.distributions.MultivariateNormal(self.mu, cov)
       return -p_x.log_prob(x), None
