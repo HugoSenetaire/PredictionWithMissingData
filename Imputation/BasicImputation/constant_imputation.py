@@ -39,8 +39,9 @@ class ConstantImputation(Imputation):
   def imputation_function(self, data, mask, index = None):
     if torch.any(torch.isnan(data)):
       data_imputed = torch.where(mask==0, torch.full_like(data,torch.tensor(0.)), data)
-
-    data_imputed = mask * data + (1-mask) * self.cste
+      data_imputed = mask * data_imputed + (1-mask) * self.cste
+    else :
+      data_imputed = mask * data + (1-mask) * self.cste
     return data_imputed
 
 class MultipleConstantImputation(Imputation):
@@ -115,7 +116,8 @@ class LearnConstantImputation(Imputation):
   def imputation_function(self, data, mask, index = None):
     if torch.any(torch.isnan(data)):
       data_imputed = torch.where(mask==0, torch.full_like(data,torch.tensor(0.)), data)
-    
-    data_imputed = mask * data + (1-mask) * self.cste
+    else :
+      data_imputed = data
+    data_imputed = mask * data_imputed + (1-mask) * self.cste
     # data_imputed = torch.where(mask==0, torch.full_like(data,self.cste), data)
     return data_imputed 
