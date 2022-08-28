@@ -1,10 +1,11 @@
 import torch
 import torch.nn as nn
+import numpy as np
 
 class Gaussian(nn.Module):
   def __init__(self, dim = 100):
     super(Gaussian, self).__init__()
-    self.dim = torch.tensor(dim, dtype=torch.int64)
+    self.dim = torch.tensor(np.prod(dim), dtype=torch.int64)
     self.mu = nn.parameter.Parameter(torch.normal(mean = torch.zeros((dim,)), std = torch.ones((dim,))), requires_grad = True)
     self.log_diagonal = nn.parameter.Parameter(torch.normal(mean = torch.zeros((dim,)), std = torch.ones((dim,))), requires_grad = True,)
     self.tril_indices = torch.tril_indices(self.dim, self.dim, -1)
