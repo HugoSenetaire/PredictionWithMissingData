@@ -1,4 +1,4 @@
 from .BasicImputation import LearnConstantImputation, ConstantImputation, MultipleConstantImputation, MaskAsInput, NoDestructionImputation, ModuleImputation, SumImpute, DatasetBasedImputation, NoiseImputation, get_imputation_type
 from .PostProcesses import addNoiseToUnmask, NetworkTransform, NetworkAdd, NetworkTransformMask, get_post_process_reg
 from .PreProcesses import MaskRegularization, RateMaskRegularization, RateMaskRegularization2, get_maskreg
-from .ReconstructionRegularization import AutoEncoderReconstructionRegularization, get_reconstruction_regularization
+from .ReconstructionRegularization import AutoEncoderReconstructionRegularization, get_reconstruction_regularization, dic_reconstruction_regularization, AutoEncoderLatentReconstruction

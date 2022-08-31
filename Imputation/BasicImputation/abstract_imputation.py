@@ -51,19 +51,14 @@ class Imputation(nn.Module):
 
   
   def add_mask_method(self, data_imputed, mask):
-    if len(mask.shape)>2:
-      mask_aux = mask[:,0].unsqueeze(1)
-    else :
-      mask_aux = mask
-    return torch.cat([data_imputed, mask_aux], axis =1)
+    return torch.cat([data_imputed, mask], axis =1)
 
 
   def post_process(self, data_imputed, data, mask, index = None):
     if self.post_process_regularization is not None :
       for process in self.post_process_regularization:
         data_imputed, mask = process(data_imputed, data, mask, index = index)
-    if self.add_mask:
-      data_imputed = self.add_mask_method(data_imputed, mask)
+    
     return data_imputed
 
   def mask_regularization(self, data, mask):
@@ -89,7 +84,15 @@ class Imputation(nn.Module):
       nb_imputation_iwae = self.nb_imputation_iwae_test
 
     data_expanded, mask_expanded, index_expanded = expand_for_imputations(data, mask, nb_imputation_mc = nb_imputation_mc, nb_imputation_iwae=nb_imputation_iwae, index = index, collapse = True)
+    
     data_imputed = self.imputation_function(data_expanded, mask_expanded, index_expanded)
+    if self.add_mask :
+      data_imputed = self.add_mask_method(data_imputed, mask_expanded)
+
+    if self.add_mask:
+      mask_transformed_data_expanded = torch.ones_like(data_expanded, requires_grad=False)
+      data_expanded = self.add_mask_method(data_expanded, mask_transformed_data_expanded)
+
     loss_reconstruction = self.reconstruction_regularization(data_imputed, data_expanded, mask_expanded, index = index_expanded)
     data_imputed = self.post_process(data_imputed, data_expanded, mask_expanded, index = index_expanded)
     return data_imputed, loss_reconstruction

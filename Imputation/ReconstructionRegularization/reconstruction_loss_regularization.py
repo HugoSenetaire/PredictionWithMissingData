@@ -15,6 +15,23 @@ class NetworkBasedReconstructionRegularization(nn.Module):
 
 ### LOSS REGULARIZATION : 
 
+class AutoEncoderLatentReconstruction(NetworkBasedReconstructionRegularization):
+  def __init__(self, network_reconstruction, lambda_reconstruction=0.1,):
+    super(AutoEncoderLatentReconstruction, self).__init__(network_reconstruction, lambda_reconstruction=lambda_reconstruction,)
+
+  def __call__(self, data_imputed, data, mask, index = None):
+    latent_z_imputed = self.network_reconstruction.encode(data_imputed).flatten(1)
+    latent_z = self.network_reconstruction.encode(data).flatten(1)
+
+    dim_data = data.flatten(1).shape[1]
+    mask_lambda = torch.sum(mask.flatten(1), dim = 1, dtype=torch.float32) / dim_data
+
+    mse_per_batch = torch.sum((latent_z_imputed - latent_z)**2, dim = 1)
+    loss = self.lambda_reconstruction * mask_lambda * mse_per_batch
+    loss = torch.mean(loss)
+    
+    return loss
+
 class AutoEncoderReconstructionRegularization(NetworkBasedReconstructionRegularization):
   """
   Add an extra loss to the complete model so that the reconstruction of the imputed image is not too far from the original image.
