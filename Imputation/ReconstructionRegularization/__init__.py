@@ -5,4 +5,5 @@ dic_reconstruction_regularization = {
     "AutoEncoderLatentReconstruction" : AutoEncoderLatentReconstruction,
     "None" : None,
     "none" : None,
+    None : None,
 }

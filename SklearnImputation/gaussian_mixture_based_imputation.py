@@ -87,6 +87,12 @@ class GaussianMixtureBasedImputation(nn.Module):
     raise NotImplementedError
 
 
+
+def instantiate_GaussianMixtureImputation(param):
+    """ Instantiate a GaussianMixtureImputation object from the param dictionary. """
+    return GaussianMixtureImputation(param["imputation_network_weights_path"], param["mean_imputation"])
+    
+
 class GaussianMixtureImputation(GaussianMixtureBasedImputation):
   def __init__(self, imputation_network_weights_path, mean_imputation = False, **kwargs):
     super().__init__(imputation_network_weights_path, )
@@ -126,6 +132,11 @@ class GaussianMixtureImputation(GaussianMixtureBasedImputation):
       else :
           sampled = torch.normal(wanted_centroids, torch.sqrt(wanted_covariances)).type(torch.float32).reshape(wanted_shape)
     return sampled
+
+
+def instantiate_GaussianMixtureDatasetImputation(param):
+    """ Instantiate a GaussianMixtureDatasetImputation object from the param dictionary. """
+    return GaussianMixtureDatasetImputation(param["imputation_network_weights_path"], param["data_to_impute"])
 
 
 class GaussianMixtureDatasetImputation(GaussianMixtureBasedImputation):

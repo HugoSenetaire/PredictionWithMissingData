@@ -1,4 +1,6 @@
 from .Imputation import *
-from .SklearnImputation import GaussianMixtureImputation, GaussianMixtureDatasetImputation, train_gmm, KmeansDatasetImputation, train_kmeans 
-from .gaussian import Gaussian
-from .prediction_module import PredictionModule
+from .LatentImputation import *
+from .SklearnImputation import*
+from .gaussian import *
+from .prediction_module import *
+from .get_module_imputation import *

@@ -1,1 +1,1 @@
-from .VAEAC_imputation import VAEACImputation, train_VAEAC
+from .VAEAC_imputation import VAEACImputation, train_VAEAC, instantiate_VAEACImputation

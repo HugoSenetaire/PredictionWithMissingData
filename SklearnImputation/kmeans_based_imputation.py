@@ -37,6 +37,11 @@ def train_kmeans(data, n_components, save_path):
 
 
 
+def instantiate_KmeansDatasetImputation(param):
+    """ Instantiate a KmeansDatasetImputation object from the param dictionary. """
+    return KmeansDatasetImputation(param["imputation_network_weights_path"], param["data_to_impute"])
+
+
 
 class KmeansDatasetImputation(nn.Module):
   """

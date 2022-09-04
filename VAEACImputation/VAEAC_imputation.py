@@ -77,6 +77,11 @@ def train_VAEAC(loader, model_dir, epochs = 20):
 
 
 
+def instantiate_VAEACImputation(param):
+    """ Instantiate a VAEACImputation object from the param dictionary. """
+    return VAEACImputation(param["model_dir"],)
+
+
 class VAEACImputation(nn.Module):
   def __init__(self, model_dir, **kwargs):
     super().__init__()

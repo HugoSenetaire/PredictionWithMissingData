@@ -1,0 +1,2 @@
+from .gaussian_mixture_latent_imputation import GaussianMixtureLatentImputation, GaussianMixtureLatentBasedImputation, train_gmm_latent, instantiate_GaussianMixtureLatentImputation
+from .wrapper_autoencoder import WrapperAutoencoder

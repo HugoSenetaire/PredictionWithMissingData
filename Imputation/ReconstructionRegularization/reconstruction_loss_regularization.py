@@ -47,7 +47,7 @@ class AutoEncoderReconstructionRegularization(NetworkBasedReconstructionRegulari
 
 
 reconstruction_regularization_list = {
-  "auto_encoder": AutoEncoderReconstructionRegularization,
+  "autoencoder": AutoEncoderReconstructionRegularization,
   "None": None,
   "none": None,
 }
