@@ -63,7 +63,7 @@ def train_VAEAC(loader, model_dir, epochs = 20):
     # load train and validation datasets
     try :
         train_dataset = DatasetInput(loader.dataset.data_train)
-        index = np.random.choice(range(len(train_dataset)), min(1000,len(train_dataset)), replace=False)
+        index = np.random.choice(range(len(loader.dataset.data_test)), min(1000,len(loader.dataset.data_test)), replace=False)
         validation_dataset = DatasetInput(loader.dataset.data_test[index])
     except AttributeError:
         train_dataset = NoTargetDataset(loader.dataset_train)
