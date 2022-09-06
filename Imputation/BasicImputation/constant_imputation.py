@@ -41,7 +41,7 @@ class ConstantImputation(Imputation):
       data_imputed = torch.where(mask==0, torch.full_like(data,torch.tensor(0.)), data)
       data_imputed = mask * data_imputed + (1-mask) * self.cste
     else :
-      data_imputed = mask * data + (1-mask) * self.cste
+      data_imputed = mask * data + (1-mask) * self.cste.to(data.device)
     return data_imputed
 
 class MultipleConstantImputation(Imputation):
