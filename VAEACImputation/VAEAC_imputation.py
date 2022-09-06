@@ -32,14 +32,24 @@ class DatasetInput(Dataset):
         return image
 
 class NoTargetDataset(Dataset):
-    def __init__(self, dataset):
+    def __init__(self, dataset, lenght = None):
         self.dataset = dataset
+        self.lenght = lenght
+        if lenght is not None and lenght< len(self.dataset):
+            self.index = np.random.choice(len(self.dataset), lenght, replace=False)
 
     def __getitem__(self, index):
-        return self.dataset[index][0]
+        if self.lenght is not None :
+            new_index = self.index[index]
+            return self.dataset[new_index]
+        else :
+            return self.dataset[index][0]
 
     def __len__(self):
-        return len(self.dataset)
+        if self.lenght is not None :
+            return self.lenght
+        else :
+            return len(self.dataset)
 
 def train_VAEAC(loader, model_dir, epochs = 20):
     """ Training a Gaussian Mixture Model on the data using sklearn. """
@@ -53,10 +63,11 @@ def train_VAEAC(loader, model_dir, epochs = 20):
     # load train and validation datasets
     try :
         train_dataset = DatasetInput(loader.dataset.data_train)
-        validation_dataset = DatasetInput(loader.dataset.data_test)
+        index = np.random.choice(range(len(train_dataset)), min(1000,len(train_dataset)), replace=False)
+        validation_dataset = DatasetInput(loader.dataset.data_test[index])
     except AttributeError:
         train_dataset = NoTargetDataset(loader.dataset_train)
-        validation_dataset = NoTargetDataset(loader.dataset_test)
+        validation_dataset = NoTargetDataset(loader.dataset_test, lenght=1000)
 
     # build dataloaders on top of datasets
     dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
