@@ -31,6 +31,15 @@ class DatasetInput(Dataset):
         image = self.data[idx]
         return image
 
+class NoTargetDataset(Dataset):
+    def __init__(self, dataset):
+        self.dataset = dataset
+
+    def __getitem__(self, index):
+        return self.dataset[index][0]
+
+    def __len__(self):
+        return len(self.dataset)
 
 def train_VAEAC(loader, model_dir, epochs = 20):
     """ Training a Gaussian Mixture Model on the data using sklearn. """
@@ -42,8 +51,12 @@ def train_VAEAC(loader, model_dir, epochs = 20):
     sampler = model_module.sampler
 
     # load train and validation datasets
-    train_dataset = DatasetInput(loader.dataset.data_train)
-    validation_dataset = DatasetInput(loader.dataset.data_test)
+    try :
+        train_dataset = DatasetInput(loader.dataset.data_train)
+        validation_dataset = DatasetInput(loader.dataset.data_test)
+    except AttributeError:
+        train_dataset = NoTargetDataset(loader.dataset_train)
+        validation_dataset = NoTargetDataset(loader.dataset_test)
 
     # build dataloaders on top of datasets
     dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
