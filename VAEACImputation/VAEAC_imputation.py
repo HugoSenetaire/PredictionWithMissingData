@@ -41,7 +41,7 @@ class NoTargetDataset(Dataset):
     def __getitem__(self, index):
         if self.lenght is not None :
             new_index = self.index[index]
-            return self.dataset[new_index]
+            return self.dataset[new_index][0]
         else :
             return self.dataset[index][0]
 
