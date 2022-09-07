@@ -13,7 +13,12 @@ def train_gmm_latent(data, autoencoder_wrapper, n_components, save_path):
     if not os.path.exists(os.path.dirname(save_path)):
       os.makedirs(os.path.dirname(save_path))
 
-
+    if torch.cuda.is_available():
+      data = data.cuda()
+      autoencoder_wrapper = autoencoder_wrapper.cuda()
+    else :
+      data = data.cpu()
+      autoencoder_wrapper = autoencoder_wrapper.cpu()
     data_masked = autoencoder_wrapper.get_imputation(data, mask = torch.ones_like(data))
     latent_z = autoencoder_wrapper.classifier.encode(data_masked,)
     latent_z = latent_z.detach().numpy()
