@@ -44,6 +44,8 @@ class Imputation(nn.Module):
 
   def reconstruction_regularization(self, data_imputed, data, mask, index = None):
     loss_reconstruction = torch.tensor(0., device = data.device)
+    if not self.training :
+      return loss_reconstruction
     if self.reconstruction_reg is not None :
       for process in self.reconstruction_reg :
           loss_reconstruction += process(data_imputed, data, mask, index = index)
