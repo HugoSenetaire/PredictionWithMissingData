@@ -1,6 +1,7 @@
 from .LatentImputation import *
 from .SklearnImputation import *
 from .VAEACImputation import *
+from .MixtureOfLogisticsImputation import MixtureOfLogisticsImputation, instantiate_MixtureofLogistics
 
 list_module_imputation = {
     "VAEACImputation" :VAEACImputation,
@@ -8,6 +9,7 @@ list_module_imputation = {
     "GaussianMixtureImputation" : GaussianMixtureImputation,
     "GaussianMixtureDatasetImputation" : GaussianMixtureDatasetImputation,
     "KmeansDatasetImputation" : KmeansDatasetImputation,
+    "MixtureOfLogisticsImputation" : MixtureOfLogisticsImputation,
     "None" : None,
     None : None,
 }
@@ -18,6 +20,7 @@ list_instantiate_module_imputation = {
     "GaussianMixtureImputation" : instantiate_GaussianMixtureImputation,
     "GaussianMixtureDatasetImputation" : instantiate_GaussianMixtureDatasetImputation,
     "KmeansDatasetImputation" : instantiate_KmeansDatasetImputation,
+    "MixtureOfLogisticsImputation" : instantiate_MixtureofLogistics,
 }
 
 

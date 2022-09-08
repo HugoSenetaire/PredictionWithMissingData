@@ -104,7 +104,10 @@ def instantiate_GaussianMixtureLatentImputation(param):
     """ Instantiate a GaussianMixtureLatentImputation object from the param dictionary. """
     imputation_network_weights_path = param["imputation_network_weights_path"]
     autoencoder = param["module"].prediction_module
-    return GaussianMixtureLatentImputation(imputation_network_weights_path, autoencoder, )
+    gaussian_mixture_latent_imputation = GaussianMixtureLatentImputation(imputation_network_weights_path, autoencoder, )
+    for param in gaussian_mixture_latent_imputation.parameters():
+        param.requires_grad = False
+    return gaussian_mixture_latent_imputation
     
 
 
