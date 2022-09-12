@@ -131,6 +131,16 @@ def validation(mixture, k, epochs, dataloader, verbose = True, sample = True, di
         if not os.path.exists(sample_dir):
             os.makedirs(sample_dir)
         
+        mixture = mixture.mu_parameters.data * 127.5 + 127.5
+        mixture = mixture[:10].reshape((10, *data.shape[1:])).permute(0,2,3,1) 
+
+        mixture = mixture.cpu().numpy().astype(np.uint8)
+        for center in range(10):
+            plt.figure(figsize=(10,10))
+            out_path = os.path.join(sample_dir, "center_{}.png".format(center))
+            plt.imshow(mixture[center], cmap='gray')
+            plt.savefig(out_path)
+            plt.close()
         for i in range(10):
             plt.figure(figsize=(20,10))
             plt.imshow(img[i], cmap = 'gray')
@@ -164,6 +174,8 @@ def sgd_training(epochs, mixture, train_dataset, validation_dataset, batch_size,
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+            mixture.mu_parameters.data = torch.clamp(mixture.mu_parameters.data, -1.0, 1.0)
+
             if verbose and i % max((len(dataloader)//10),1) == 0:
                 print("Batch {} / {}".format(i, len(dataloader)))
                 print("Loss : {}".format(loss.item()))
@@ -210,6 +222,7 @@ def m_step(mixture, dataloader, optimizer, nb_m_step = None):
         loss = -log_prob.mean()
         loss.backward()
         optimizer.step()
+        mixture.mu_parameters.data = torch.clamp(mixture.mu_parameters.data, -1.0, 1.0)
 
 def e_step(mixture, dataloader, nb_e_step = None):
     print("E step")
