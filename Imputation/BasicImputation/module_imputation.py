@@ -57,7 +57,7 @@ class ModuleImputation(Imputation):
   def imputation_function(self, data, mask, index = None):
       with torch.no_grad():
         if data.is_cuda and torch.cuda.device_count() > 1:
-          self.module.to("cuda:1")
+          self.module = self.module.to("cuda:1")
           aux_data = data.to("cuda:1")
           aux_mask = mask.to("cuda:1")
         if index is not None :

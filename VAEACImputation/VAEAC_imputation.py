@@ -116,6 +116,7 @@ class VAEACImputation(nn.Module):
     model_module, model, optimizer, batch_size, vlb_scale_factor, mask_generator, validation_iwae, train_vlb = load_model(model_dir, use_cuda=self.use_cuda)
     self.model = model
     self.sampler = model_module.sampler
+    del self.model.proposal_network
     
 
   def __call__(self, data, mask, index = None,):
