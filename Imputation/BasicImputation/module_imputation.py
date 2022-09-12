@@ -64,7 +64,7 @@ class ModuleImputation(Imputation):
           aux_index = index.to("cuda:1")
         else:
           aux_index = None
-        imputation = self.module(data, mask, index = index)
+        imputation = self.module(aux_data, aux_mask, index = aux_index)
       imputation = imputation.to(data.device)
       data_imputed = data * mask + (1-mask) * imputation
       return data_imputed
