@@ -109,7 +109,7 @@ class MixtureOfLogistics(nn.Module):
         dependency = torch.exp(log_dependency)
         return dependency
 
-    def sample(self, x, mask, nb_samples = 1):
+    def sample(self, x, mask, nb_samples = 1, mean_sample = False):
         if x is None :
             dependency = torch.exp(self.log_weight.unsqueeze(1).expand(self.nb_centers, nb_samples))
         else :
@@ -119,11 +119,13 @@ class MixtureOfLogistics(nn.Module):
         
         wanted_s= self.log_s_parameters[index_resampling]
         wanted_mu = self.mu_parameters[index_resampling]
-        samples = torch.distributions.Uniform(1e-5* torch.ones_like(wanted_mu), torch.ones_like(wanted_mu) - 1e-5).sample()
-        samples = wanted_mu + torch.exp(wanted_s) * (torch.log(samples + 1e-8) - torch.log(1.0 - samples + 1e-8)) 
-        samples = torch.clamp(samples, min = -1.0, max = 1.0)
-
-        samples = ((samples * 255/2 + 127.5) - self.transform_mean)/self.transform_std
+        if mean_sample :
+            samples = ((wanted_mu * 255/2 + 127.5) - self.transform_mean)/self.transform_std
+        else :
+            samples = torch.distributions.Uniform(1e-5* torch.ones_like(wanted_mu), torch.ones_like(wanted_mu) - 1e-5).sample()
+            samples = wanted_mu + torch.exp(wanted_s) * (torch.log(samples + 1e-8) - torch.log(1.0 - samples + 1e-8)) 
+            samples = torch.clamp(samples, min = -1.0, max = 1.0)
+            samples = ((samples * 255/2 + 127.5) - self.transform_mean)/self.transform_std
         
         return samples
 
