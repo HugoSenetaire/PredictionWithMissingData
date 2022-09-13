@@ -11,4 +11,4 @@ class MixtureOfLogisticsImputation(nn.Module):
     
     def __call__(self, data, mask, index=None,):
         with torch.no_grad():
-            return self.mixture.impute(data, mask, mean_sample = self.mean_imputation)
+            return self.mixture.sample(data, mask, mean_sample = self.mean_imputation)
