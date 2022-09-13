@@ -80,12 +80,11 @@ def initialize_mixture(mixture, train_dataset, max_size = 100000, epochs = 2, lr
         current_train_dataset = [train_dataset.__getitem__(i) for i in index]
         if not isinstance(current_train_dataset[0], torch.Tensor):
             current_train_dataset = [torch.from_numpy(current_train_dataset[i]).to(torch.float32) for i in range(len(current_train_dataset))]
-        current_train_dataset = torch.cat(current_train_dataset, dim = 0)
+        current_train_dataset = torch.stack(current_train_dataset)
     
     current_train_dataset = mixture.transform_data(current_train_dataset)
     data_shape = current_train_dataset.shape
     nb_centers = mixture.nb_centers
-
 
     kmeans = sklearn.cluster.KMeans(n_clusters = nb_centers, n_init = 1).fit(current_train_dataset.flatten(1).detach().cpu().numpy())
     mixture.mu_parameters.data = torch.from_numpy(kmeans.cluster_centers_).reshape((nb_centers, *data_shape[1:])).to(mixture.mu_parameters.device)
