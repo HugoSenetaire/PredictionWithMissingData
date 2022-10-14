@@ -30,8 +30,8 @@ class Gaussian(nn.Module):
       return -p_x.log_prob(x.flatten(1)), None
     else :
       for i, (current_x, current_mask) in enumerate(zip(x, mask)):
-          current_mask_flatten = current_mask.flatten(1)
-          current_x_s = current_x.flatten(1)[current_mask_flatten]
+          current_mask_flatten = current_mask.flatten()
+          current_x_s = current_x.flatten()[current_mask_flatten]
           mu_s = self.mu[current_mask_flatten]
           cov_s = cov[current_mask_flatten][:, current_mask_flatten]
           p_x = torch.distributions.MultivariateNormal(mu_s, cov_s) # TODO (@hhjs) : Change this to use LowerTriangular
