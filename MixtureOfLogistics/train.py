@@ -261,7 +261,7 @@ def em_training(mixture, train_dataset, validation_dataset, nb_m_step = 1, nb_e_
 
 
 def train_MixtureOfLogistics(loader,
-                            model_dir,
+                            model_dir = None,
                             nb_component=20,
                             epochs = 20,
                             transform_mean = 0.5,
@@ -319,7 +319,10 @@ def train_MixtureOfLogistics(loader,
     else :
         raise ValueError("type_of_training should be either sgd or em")
     
+    if model_dir is not None :
     # Save the model
-    torch.save(mixture.state_dict(), os.path.join(model_dir, f"mixture_of_logistics.pt"))
+        torch.save(mixture.state_dict(), os.path.join(model_dir, f"mixture_of_logistics.pt"))
+    else :
+        return mixture
     
 
