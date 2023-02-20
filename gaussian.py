@@ -28,7 +28,7 @@ class Gaussian(nn.Module):
     if self.cov is not None:
       return self.cov
     else :
-      aux = torch.zeros((self.dim, self.dim), dtype=torch.float32)
+      aux = torch.zeros((self.dim, self.dim), dtype=torch.float32, device=self.log_diagonal.device)
       aux[self.tril_indices[0], self.tril_indices[1]] = self.lower_tri
       aux += torch.diag(torch.exp(self.log_diagonal))
       cov = torch.matmul(aux, aux.t())
@@ -66,7 +66,8 @@ class GaussianV2(Gaussian):
   def get_precision(self):
 
     if self.cov is None :
-      aux = torch.zeros((self.dim, self.dim), dtype=torch.float32)
+      aux = torch.zeros((self.dim, self.dim), dtype=torch.float32, device=self.log_diagonal.device)
+      self.tril_indices = self.tril_indices.to(self.log_diagonal.device)
       aux[self.tril_indices[0], self.tril_indices[1]] = self.lower_tri
       aux += torch.diag(torch.exp(self.log_diagonal))
       precision = torch.matmul(aux.t(), aux)
@@ -84,14 +85,14 @@ class GaussianV2(Gaussian):
 
   def forward(self, x, mask):
     # cov = self.get_cov()
-    precision = self.get_precision()
+    precision = self.get_precision().to(x.device)
     # try :
     singular_values_inv = torch.linalg.svdvals(precision) # Rather than calculate this, one could just maximize ||sigma x|| / ||x||
     singular_values = (1/singular_values_inv)+1e-8
     mask = mask.type(torch.bool)
 
     precision = precision.unsqueeze(0).expand(x.shape[0], -1, -1)
-    mu = self.mu.unsqueeze(0).expand(x.shape[0], -1)
+    mu = self.mu.unsqueeze(0).expand(x.shape[0], -1).to(x.device)
     singular_values = singular_values.unsqueeze(0).expand(x.shape[0], -1)
     current_mask_flatten = mask.flatten(1)
 
